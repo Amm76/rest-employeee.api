@@ -4,23 +4,29 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Task;
+use Illuminate\Support\Facades\Auth;
 
 class TaskController extends Controller
 {
     //
 
     function store(Request $request){
-        Task::create($request->all());
+        $newTask = Task::create($request->all());
+        //hubungkan task yg baru dicreate 
+        $newTask->tags()->attach($request->tags);
         return response()->json(["status" => "ok","message" => "Succsessfully created"]);
     }
 
     function index(){
-        $tasks = Task::all();
-        return response()->json(["status" => "ok","data" =>$tasks]);
-    }
+
+        // $tasks = Task::all();
+        $tasks = Task::where('user_id',Auth::user()->id)->get();
+         return response()->json(["status"=>"ok","data"=>$tasks]);
+     }
+ 
 
     function show($id){
-        $task = Task::find($id);
+        $task = Task::with('tags')->find($id);
         return response()->json(["status" =>"ok","data" =>$task]);
     }
 

@@ -2,7 +2,9 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-use App\http\Controllers\TaskController;
+use App\Http\Controllers\TaskController;
+use App\Http\Controllers\TagController;
+use App\Http\Controllers\Passportcontroller;
 
 /*
 |--------------------------------------------------------------------------
@@ -15,9 +17,19 @@ use App\http\Controllers\TaskController;
 |
 */
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
-});
+Route::middleware('jwt.auth')->group(function(){
+
+    //Create
+
+Route::post('/tasks', [TaskController::class, 'store']);
+
+Route::get('tasks',[TaskController::class, 'index']); 
+
+Route::get('/tasks/{id}', [TaskController::class, 'show']); 
+
+Route::put('/tasks/{id}', [TaskController::class, 'update']);
+
+Route::delete('/tasks/{id}', [TaskController::class, 'delete']);
 
 Route::get('/hello', function () {
     return "Hello World";
@@ -31,15 +43,19 @@ Route::post('/info', function (Request $request) {
     return "Your name is " . $request["name"]. " Your age is " . $request["age"]." years old";
 });
 
-//CReate
+});
 
-Route::post('/tasks', [TaskController::class, 'store']);
+//Tag
 
-Route::get('tasks',[TaskController::class, 'index']); 
-// get one employees
+Route::post('/tags', [TagController::class, 'create']);
 
-Route::get('/tasks/{id}', [TaskController::class, 'show']); 
-//Edit 
-Route::put('/tasks/{id}', [TaskController::class, 'update']);
+Route::get('/tags', [TagController::class, 'index']);
 
-Route::delete('/tasks/{id}', [TaskController::class, 'delete']);
+Route::get('/tags/{id}', [TagController::class, 'show']);
+
+
+
+Route::post('/login', [PassportController::class, 'login']);
+
+Route::post('/register', [PassportController::class, 'register']);
+
